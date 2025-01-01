@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Advisor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow">
+        <h1 class="text-2xl font-bold mb-6">Rural Financial Advisor</h1>
+        
+        <form id="advisorForm" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium">Name</label>
+                    <input type="text" name="name" required class="mt-1 block w-full rounded border p-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium">Age</label>
+                    <input type="number" name="age" required class="mt-1 block w-full rounded border p-2">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Location</label>
+                <input type="text" name="location" required class="mt-1 block w-full rounded border p-2">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Preferred Language</label>
+                <select name="preferred_language" required class="mt-1 block w-full rounded border p-2">
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Odia">Odia</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium">Monthly Income (₹)</label>
+                    <input type="number" name="monthly_income" required class="mt-1 block w-full rounded border p-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium">Family Size</label>
+                    <input type="number" name="family_size" required class="mt-1 block w-full rounded border p-2">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Business Type</label>
+                <select name="business_type" id="businessType" required class="mt-1 block w-full rounded border p-2">
+                    <option value="">Loading...</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Existing Savings (₹)</label>
+                <input type="number" name="existing_savings" required class="mt-1 block w-full rounded border p-2">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Financial Goal</label>
+                <textarea name="financial_goal" required class="mt-1 block w-full rounded border p-2"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Risk Tolerance</label>
+                <select name="risk_tolerance" required class="mt-1 block w-full rounded border p-2">
+                    <option value="low">Low Risk</option>
+                    <option value="medium">Medium Risk</option>
+                    <option value="high">High Risk</option>
+                </select>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                Get Financial Advice
+            </button>
+        </form>
+
+        <div id="loading" class="hidden mt-4">
+            <p class="text-center">Generating advice...</p>
+        </div>
+
+        <div id="result" class="mt-4 p-4 bg-gray-50 rounded hidden">
+            <h2 class="font-bold mb-2">Financial Advice:</h2>
+            <div id="advice" class="whitespace-pre-wrap"></div>
+        </div>
+    </div>
+
+    <script>
+        // Load business types when page loads
+        fetch('/business-types')
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById('businessType');
+                select.innerHTML = data.business_types
+                    .map(type => `<option value="${type}">${type}</option>`)
+                    .join('');
+            });
+
+        document.getElementById('advisorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Convert string numbers to actual numbers
+            data.age = Number(data.age);
+            data.monthly_income = Number(data.monthly_income);
+            data.family_size = Number(data.family_size);
+            data.existing_savings = Number(data.existing_savings);
+
+            // Show loading
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('result').classList.add('hidden');
+
+            try {
+                const response = await fetch('/get-financial-advice', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                // Display result
+                document.getElementById('advice').textContent = result.data;
+                document.getElementById('result').classList.remove('hidden');
+            } catch (error) {
+                alert('Error generating advice. Please try again.');
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
