@@ -1,0 +1,394 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Advisor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow">
+        <h1 class="text-2xl font-bold mb-6">Rural Financial Advisor</h1>
+        
+        <form id="advisorForm" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium">Name</label>
+                    <input type="text" name="name" required class="mt-1 block w-full rounded border p-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium">Age</label>
+                    <input type="number" name="age" required class="mt-1 block w-full rounded border p-2">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Location</label>
+                <input type="text" name="location" required class="mt-1 block w-full rounded border p-2">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Preferred Language</label>
+                <select name="preferred_language" required class="mt-1 block w-full rounded border p-2">
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Odia">Odia</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium">Monthly Income (₹)</label>
+                    <input type="number" name="monthly_income" required class="mt-1 block w-full rounded border p-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium">Family Size</label>
+                    <input type="number" name="family_size" required class="mt-1 block w-full rounded border p-2">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Business Type</label>
+                <select name="business_type" id="businessType" required class="mt-1 block w-full rounded border p-2">
+                    <option value="">Loading...</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Existing Savings (₹)</label>
+                <input type="number" name="existing_savings" required class="mt-1 block w-full rounded border p-2">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Financial Goal</label>
+                <textarea name="financial_goal" required class="mt-1 block w-full rounded border p-2"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Risk Tolerance</label>
+                <select name="risk_tolerance" required class="mt-1 block w-full rounded border p-2">
+                    <option value="low">Low Risk</option>
+                    <option value="medium">Medium Risk</option>
+                    <option value="high">High Risk</option>
+                </select>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                Get Financial Advice
+            </button>
+        </form>
+
+        <div id="loading" class="hidden mt-4">
+            <p class="text-center">Generating advice...</p>
+        </div>
+
+        <div id="result" class="mt-4 p-4 bg-gray-50 rounded hidden">
+            <h2 class="font-bold mb-2">Financial Advice:</h2>
+            <div id="advice" class="whitespace-pre-wrap"></div>
+        </div>
+    </div>
+
+    <script>
+        // Load business types when page loads
+        fetch('/business-types')
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById('businessType');
+                select.innerHTML = data.business_types
+                    .map(type => `<option value="${type}">${type}</option>`)
+                    .join('');
+            });
+
+        document.getElementById('advisorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Convert string numbers to actual numbers
+            data.age = Number(data.age);
+            data.monthly_income = Number(data.monthly_income);
+            data.family_size = Number(data.family_size);
+            data.existing_savings = Number(data.existing_savings);
+
+            // Show loading
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('result').classList.add('hidden');
+
+            try {
+                const response = await fetch('/get-financial-advice', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                // Display result
+                document.getElementById('advice').textContent = result.data;
+                document.getElementById('result').classList.remove('hidden');
+            } catch (error) {
+                alert('Error generating advice. Please try again.');
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rural Financial Advisory System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+            background-color: #fff;
+        }
+        .error {
+            color: red;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rural Financial Advisory System</h1>
+        
+        <form id="queryForm">
+            <div class="form-group">
+                <label for="queryType">Query Type*</label>
+                <select id="queryType" name="query_type" required>
+                    <option value="">Select Query Type</option>
+                    <option value="business_advice">Business Advice</option>
+                    <option value="savings">Savings</option>
+                    <option value="loan">Loan</option>
+                    <option value="government_schemes">Government Schemes</option>
+                    <option value="investment">Investment</option>
+                    <option value="insurance">Insurance</option>
+                    <option value="general">General</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="question">Your Question*</label>
+                <textarea id="question" name="question" rows="4" required 
+                    placeholder="Enter your financial query here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="language">Preferred Language</label>
+                <input type="text" id="language" name="language" value="English">
+            </div>
+
+            <div class="form-group">
+                <label for="monthlyIncome">Monthly Income (INR)</label>
+                <input type="number" id="monthlyIncome" name="monthly_income" 
+                    placeholder="Enter your monthly income">
+            </div>
+
+            <div class="form-group">
+                <label>Income Sources</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="income_sources" value="agriculture" id="agri">
+                        <label for="agri">Agriculture</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="income_sources" value="daily_wage" id="daily">
+                        <label for="daily">Daily Wage</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="income_sources" value="small_business" id="business">
+                        <label for="business">Small Business</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="income_sources" value="livestock" id="livestock">
+                        <label for="livestock">Livestock</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="income_sources" value="handicrafts" id="handicrafts">
+                        <label for="handicrafts">Handicrafts</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="income_sources" value="other" id="other">
+                        <label for="other">Other</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location (State/District)</label>
+                <input type="text" id="location" name="location" placeholder="Enter your location">
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" min="18" max="120">
+            </div>
+
+            <div class="form-group">
+                <label for="familySize">Family Size</label>
+                <input type="number" id="familySize" name="family_size" min="1">
+            </div>
+
+            <div class="form-group">
+                <label for="hasBankAccount">Do you have a bank account?</label>
+                <select id="hasBankAccount" name="has_bank_account">
+                    <option value="">Select</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="educationLevel">Education Level</label>
+                <input type="text" id="educationLevel" name="education_level">
+            </div>
+
+            <div class="form-group">
+                <label for="existingLoans">Existing Loans (INR)</label>
+                <input type="number" id="existingLoans" name="existing_loans">
+            </div>
+
+            <button type="submit">Get Financial Advice</button>
+        </form>
+
+        <div id="response"></div>
+    </div>
+
+    <script>
+        document.getElementById('queryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const response = document.getElementById('response');
+            
+            // Collect checked income sources
+            const incomeSources = [];
+            document.querySelectorAll('input[name="income_sources"]:checked').forEach(checkbox => {
+                incomeSources.push(checkbox.value);
+            });
+
+            const data = {
+                query_type: formData.get('query_type'),
+                question: formData.get('question'),
+                language: formData.get('language'),
+                monthly_income: formData.get('monthly_income') ? Number(formData.get('monthly_income')) : null,
+                income_sources: incomeSources,
+                location: formData.get('location') || null,
+                age: formData.get('age') ? Number(formData.get('age')) : null,
+                family_size: formData.get('family_size') ? Number(formData.get('family_size')) : null,
+                has_bank_account: formData.get('has_bank_account') ? formData.get('has_bank_account') === 'true' : null,
+                education_level: formData.get('education_level') || null,
+                existing_loans: formData.get('existing_loans') ? Number(formData.get('existing_loans')) : null
+            };
+
+            try {
+                const res = await fetch('/get-advice', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+                
+                if (result.status === 'success') {
+                    response.style.display = 'block';
+                    response.innerHTML = `
+                        <h3>Financial Advice</h3>
+                        <p>${result.advice.replace(/\n/g, '<br>')}</p>
+                    `;
+                } else {
+                    throw new Error(result.detail);
+                }
+            } catch (error) {
+                response.style.display = 'block';
+                response.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
