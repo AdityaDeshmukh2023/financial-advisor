@@ -136,5 +136,15 @@ def get_business_types():
         ]
     })
 
+@app.route('/add', methods=['GET'])
+def add_numbers():
+    try:
+        # Get query parameters
+        a = int(request.args.get('a', 0))
+        b = int(request.args.get('b', 0))
+        return jsonify({'result': a + b}), 200
+    except ValueError:
+        return jsonify({'error': 'Invalid input'}), 400    
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
